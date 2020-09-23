@@ -31,19 +31,24 @@ package org.opennms.netmgt.flows.elastic.agg;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.opennms.features.jest.client.SearchResultUtils;
 import org.opennms.features.jest.client.index.IndexSelector;
 import org.opennms.netmgt.flows.api.BytesInOut;
 import org.opennms.netmgt.flows.api.Conversation;
+import org.opennms.netmgt.flows.api.ConversationKey;
 import org.opennms.netmgt.flows.api.Directional;
 import org.opennms.netmgt.flows.api.Host;
 import org.opennms.netmgt.flows.api.TrafficSummary;
+import org.opennms.netmgt.flows.elastic.ConversationKeyUtils;
 import org.opennms.netmgt.flows.elastic.ElasticFlowQueryService;
 import org.opennms.netmgt.flows.elastic.ProportionalSumAggregation;
 import org.opennms.netmgt.flows.filter.api.Filter;
@@ -52,6 +57,8 @@ import org.opennms.netmgt.flows.filter.api.TimeRangeFilter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import io.searchbox.client.JestClient;
 import io.searchbox.core.SearchResult;
@@ -65,6 +72,7 @@ import io.searchbox.core.search.aggregation.TermsAggregation;
 public class AggregatedFlowQueryService extends ElasticFlowQueryService {
 
     public static final String INDEX_NAME = "netflow_agg";
+    public static final String OTHER_NAME = "Other";
 
     private final AggregatedSearchQueryProvider searchQueryProvider = new AggregatedSearchQueryProvider();
 
@@ -72,64 +80,131 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
         super(client, indexSelector);
     }
 
+    /**
+     * use the convert the results of the proportional_sum aggregation (provided by our ES plugin) to a table
+     */
+    private static void toTableFromBuckets(ImmutableTable.Builder<Directional<String>, Long, Double> builder, SearchResult res,
+                                           final Function<TermsAggregation.Entry, String> transform) {
+        final MetricAggregation aggs = res.getAggregations();
+        if (aggs == null) {
+            // No results
+            return;
+        }
+        final TermsAggregation byKeyAgg = aggs.getTermsAggregation("by_key");
+        if (byKeyAgg == null) {
+            // No results
+            return;
+        }
+        for (TermsAggregation.Entry bucket : byKeyAgg.getBuckets()) {
+            final ProportionalSumAggregation bytesInAgg = bucket.getAggregation("bytes_in", ProportionalSumAggregation.class);
+            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesInAgg.getBuckets()) {
+                builder.put(new Directional<>(transform.apply(bucket), true), dateHistogram.getTime(), dateHistogram.getValue());
+            }
+            final ProportionalSumAggregation bytesOutAgg = bucket.getAggregation("bytes_out", ProportionalSumAggregation.class);
+            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesOutAgg.getBuckets()) {
+                builder.put(new Directional<>(transform.apply(bucket), false), dateHistogram.getTime(), dateHistogram.getValue());
+            }
+        }
+    }
+
+    /**
+     * use the convert the results of the proportional_sum aggregation (provided by our ES plugin) to a table
+     */
+    private static <T> void toTableFromTotals(ImmutableTable.Builder<Directional<String>, Long, Double> builder, SearchResult res) {
+        final MetricAggregation aggs = res.getAggregations();
+        if (aggs == null) {
+            // No results
+            return;
+        }
+        final ProportionalSumAggregation bytesInAgg = aggs.getAggregation("bytes_in", ProportionalSumAggregation.class);
+        if (bytesInAgg != null) {
+            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesInAgg.getBuckets()) {
+                builder.put(new Directional<>(OTHER_NAME, true), dateHistogram.getTime(), dateHistogram.getValue());
+            }
+        }
+        final ProportionalSumAggregation bytesOutAgg = aggs.getAggregation("bytes_out", ProportionalSumAggregation.class);
+        if (bytesOutAgg != null) {
+            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesOutAgg.getBuckets()) {
+                builder.put(new Directional<>(OTHER_NAME, false), dateHistogram.getTime(), dateHistogram.getValue());
+            }
+        }
+    }
+
     @Override
     public CompletableFuture<List<TrafficSummary<String>>> getTopNApplicationSummaries(int N, boolean includeOther, List<Filter> filters) {
-        return getTopNSummary(N, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_APPLICATION, Types.APPLICATION );
+        return getTopNSummary(N, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_APPLICATION, "application", AggregatedFlowQueryService::mapApplication);
     }
 
     @Override
     public CompletableFuture<Table<Directional<String>, Long, Double>> getTopNApplicationSeries(int N, long step, boolean includeOther, List<Filter> filters) {
-        return getTopNSeries(N, step, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_APPLICATION, Types.APPLICATION);
+        return getTopNSeries(N, step, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_APPLICATION, "application", AggregatedFlowQueryService::mapApplication);
     }
 
     @Override
     public CompletableFuture<List<TrafficSummary<Conversation>>> getTopNConversationSummaries(int N, boolean includeOther, List<Filter> filters) {
-        return getTopNSummary(N, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_CONVERSATION, Types.CONVERSATION );
+        return getTopNSummary(N, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_CONVERSATION, "conversation_key", TermsAggregation.Entry::getKeyAsString)
+                .thenCompose((summaries) -> transpose(summaries.stream()
+                                                               .map(summary -> this.resolveHostnameForConversation(summary.getEntity(), filters)
+                                                                                   .thenApply(host -> TrafficSummary.from(host)
+                                                                                                                    .withBytesFrom(summary)
+                                                                                                                    .build()))
+                                                               .collect(Collectors.toList()),
+                                                      Collectors.toList()));
     }
 
     @Override
     public CompletableFuture<Table<Directional<Conversation>, Long, Double>> getTopNConversationSeries(int N, long step, boolean includeOther, List<Filter> filters) {
-        return getTopNSeries(N, step, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_CONVERSATION, Types.CONVERSATION );
+        return getTopNSeries(N, step, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_CONVERSATION, "conversation_key", TermsAggregation.Entry::getKeyAsString)
+                .thenCompose((res) -> mapTable(res, host -> this.resolveHostnameForConversation(host, filters)));
     }
 
     @Override
     public CompletableFuture<List<TrafficSummary<Host>>> getTopNHostSummaries(int N, boolean includeOther, List<Filter> filters) {
-        return getTopNSummary(N, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_HOST, Types.HOST );
+        return getTopNSummary(N, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_HOST, "host_address", TermsAggregation.Entry::getKeyAsString)
+                .thenCompose((summaries) -> transpose(summaries.stream()
+                                                               .map(summary -> this.resolveHostnameForHost(summary.getEntity(), filters)
+                                                                                   .thenApply(host -> TrafficSummary.from(host)
+                                                                                                                    .withBytesFrom(summary)
+                                                                                                                    .build()))
+                                                               .collect(Collectors.toList()),
+                                                      Collectors.toList()));
     }
 
     @Override
     public CompletableFuture<Table<Directional<Host>, Long, Double>> getTopNHostSeries(int N, long step, boolean includeOther, List<Filter> filters) {
-        return getTopNSeries(N, step, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_HOST, Types.HOST );
+        return getTopNSeries(N, step, includeOther, filters, GroupedBy.EXPORTER_INTERFACE_HOST, "host_address", TermsAggregation.Entry::getKeyAsString)
+                .thenCompose((res) -> mapTable(res, host -> this.resolveHostnameForHost(host, filters)));
     }
 
     /**
      * Retrieve time series data from aggregated flow statistics.
      *
-     * @param N limit on number of entities in the top K that we want to query
-     * @param step step size in ms
+     * @param N            limit on number of entities in the top K that we want to query
+     * @param step         step size in ms
      * @param includeOther true to include the delta between top-n series and the total traffic as an additional series
-     * @param filters filter criteria - see Filter
-     * @param groupedBy grouped by context to query - see GroupedBy
-     * @param type type descriptor for the entity we want to extract from the document
-     * @param <T> entity future
+     * @param filters      filter criteria - see Filter
+     * @param groupedBy    grouped by context to query - see GroupedBy
+     * @param key          to fetch series for
+     * @param transform
      * @return a future for a table containing the time series
      */
-    private <T> CompletableFuture<Table<Directional<T>, Long, Double>> getTopNSeries(int N, long step, boolean includeOther, List<Filter> filters,
-                                                                                       GroupedBy groupedBy, Types.Type<T> type) {
+    private CompletableFuture<Table<Directional<String>, Long, Double>> getTopNSeries(int N, long step, boolean includeOther, List<Filter> filters,
+                                                                                      GroupedBy groupedBy, final String key,
+                                                                                      final Function<TermsAggregation.Entry, String> transform) {
         // Time is a must for *time* series
         final TimeRangeFilter timeRangeFilter = Filter.find(filters, TimeRangeFilter.class)
-                .orElseThrow(() -> new IllegalArgumentException("Time range filter is required to derive time series."));
+                                                      .orElseThrow(() -> new IllegalArgumentException("Time range filter is required to derive time series."));
 
         // Build the series for the top-N
-        final ImmutableTable.Builder<Directional<T>, Long, Double> builder = ImmutableTable.builder();
+        final ImmutableTable.Builder<Directional<String>, Long, Double> builder = ImmutableTable.builder();
         CompletableFuture<Void> seriesFuture;
         if (N > 0) {
             final String seriesFromTopNQuery = searchQueryProvider.getSeriesFromTopNQuery(N, groupedBy,
-                    type.getKey(), step, timeRangeFilter.getStart(),
-                    timeRangeFilter.getEnd(), filters);
+                                                                                          key, step, timeRangeFilter.getStart(),
+                                                                                          timeRangeFilter.getEnd(), filters);
             seriesFuture = searchAsync(seriesFromTopNQuery, timeRangeFilter)
                     .thenApply(res -> {
-                        toTableFromBuckets(builder, type::toEntity, res);
+                        toTableFromBuckets(builder, res, transform);
                         return null;
                     });
         } else {
@@ -139,24 +214,24 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
         if (includeOther) {
             // Build the series for the total traffic
             final String seriesFromTotalQuery = searchQueryProvider.getSeriesFromTotalsQuery(groupedBy.getParent(), step, timeRangeFilter.getStart(),
-                    timeRangeFilter.getEnd(), filters);
-            final ImmutableTable.Builder<Directional<T>, Long, Double> totalsTableBuilder = ImmutableTable.builder();
+                                                                                             timeRangeFilter.getEnd(), filters);
+            final ImmutableTable.Builder<Directional<String>, Long, Double> totalsTableBuilder = ImmutableTable.builder();
             CompletableFuture<Void> totalSeriesFuture = searchAsync(seriesFromTotalQuery, timeRangeFilter)
                     .thenApply(res -> {
-                        toTableFromTotals(totalsTableBuilder, type.getOtherEntity(), res);
+                        toTableFromTotals(totalsTableBuilder, res);
                         return null;
                     });
 
             // Compute a new series to represent the delta
-            seriesFuture = seriesFuture.thenCombine(totalSeriesFuture, (topN,totals) -> {
-                ImmutableTable<Directional<T>, Long, Double> topNTable = builder.build();
-                ImmutableTable<Directional<T>, Long, Double> totalsTable = totalsTableBuilder.build();
+            seriesFuture = seriesFuture.thenCombine(totalSeriesFuture, (topN, totals) -> {
+                ImmutableTable<Directional<String>, Long, Double> topNTable = builder.build();
+                ImmutableTable<Directional<String>, Long, Double> totalsTable = totalsTableBuilder.build();
 
                 SortedSet<Long> timestamps = new TreeSet<>();
                 timestamps.addAll(topNTable.columnKeySet());
                 timestamps.addAll(totalsTable.columnKeySet());
                 for (Long ts : timestamps) {
-                    ImmutableMap<Directional<T>, Double>  entries = topNTable.column(ts);
+                    ImmutableMap<Directional<String>, Double> entries = topNTable.column(ts);
                     BytesInOut bytesFromTopN;
                     if (entries != null) {
                         bytesFromTopN = BytesInOut.sum(entries.entrySet());
@@ -175,8 +250,8 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
                     // Determine the remainder of bytes not represented by the top N
                     BytesInOut otherBytes = totalBytes.minus(bytesFromTopN);
 
-                    builder.put(new Directional<>(type.getOtherEntity(), true), ts, (double)otherBytes.getBytesIn());
-                    builder.put(new Directional<>(type.getOtherEntity(), false), ts, (double)otherBytes.getBytesOut());
+                    builder.put(new Directional<>(OTHER_NAME, true), ts, (double) otherBytes.getBytesIn());
+                    builder.put(new Directional<>(OTHER_NAME, false), ts, (double) otherBytes.getBytesOut());
                 }
 
                 return null;
@@ -186,67 +261,22 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
         return seriesFuture.thenApply(ignored -> builder.build());
     }
 
-    /** use the convert the results of the proportional_sum aggregation (provided by our ES plugin) to a table */
-    private static <T> void toTableFromBuckets(ImmutableTable.Builder<Directional<T>, Long, Double> builder, Function<String,T> keyToEntity, SearchResult res) {
-        final MetricAggregation aggs = res.getAggregations();
-        if (aggs == null) {
-            // No results
-            return;
-        }
-        final TermsAggregation byKeyAgg = aggs.getTermsAggregation("by_key");
-        if (byKeyAgg == null) {
-            // No results
-            return;
-        }
-        for (TermsAggregation.Entry bucket : byKeyAgg.getBuckets()) {
-            final ProportionalSumAggregation bytesInAgg = bucket.getAggregation("bytes_in", ProportionalSumAggregation.class);
-            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesInAgg.getBuckets()) {
-                builder.put(new Directional<>(keyToEntity.apply(bucket.getKey()), true), dateHistogram.getTime(), dateHistogram.getValue());
-            }
-            final ProportionalSumAggregation bytesOutAgg = bucket.getAggregation("bytes_out", ProportionalSumAggregation.class);
-            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesOutAgg.getBuckets()) {
-                builder.put(new Directional<>(keyToEntity.apply(bucket.getKey()), false), dateHistogram.getTime(), dateHistogram.getValue());
-            }
-        }
-    }
-
-    /** use the convert the results of the proportional_sum aggregation (provided by our ES plugin) to a table */
-    private static <T> void toTableFromTotals(ImmutableTable.Builder<Directional<T>, Long, Double> builder, T otherEntity, SearchResult res) {
-        final MetricAggregation aggs = res.getAggregations();
-        if (aggs == null) {
-            // No results
-            return;
-        }
-        final ProportionalSumAggregation bytesInAgg = aggs.getAggregation("bytes_in", ProportionalSumAggregation.class);
-        if (bytesInAgg != null) {
-            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesInAgg.getBuckets()) {
-                builder.put(new Directional<>(otherEntity, true), dateHistogram.getTime(), dateHistogram.getValue());
-            }
-        }
-        final ProportionalSumAggregation bytesOutAgg = aggs.getAggregation("bytes_out", ProportionalSumAggregation.class);
-        if (bytesOutAgg != null) {
-            for (ProportionalSumAggregation.DateHistogram dateHistogram : bytesOutAgg.getBuckets()) {
-                builder.put(new Directional<>(otherEntity, false), dateHistogram.getTime(), dateHistogram.getValue());
-            }
-        }
-    }
-
     /**
      * Retrieve traffic summaries (totals) from aggregated flow statistics.
      *
-     * @param N limit on number of entities in the top K that we want to query
+     * @param N            limit on number of entities in the top K that we want to query
      * @param includeOther true to include the delta between top-n summaries and the total traffic as an additional entry
-     * @param filters filter criteria - see Filter
-     * @param groupedBy grouped by context to query - see GroupedBy
-     * @param type type descriptor for the entity we want to extract from the document
-     * @param <T> entity future
+     * @param filters      filter criteria - see Filter
+     * @param groupedBy    grouped by context to query - see GroupedBy
+     * @param key          to fetch series for
      * @return a future for a list containing the summary for the different entities
      */
-    private <T> CompletableFuture<List<TrafficSummary<T>>> getTopNSummary(int N, boolean includeOther, List<Filter> filters,
-                                                                          GroupedBy groupedBy, Types.Type<T> type) {
-        CompletableFuture<List<TrafficSummary<T>>> summaryFutures;
+    private CompletableFuture<List<TrafficSummary<String>>> getTopNSummary(int N, boolean includeOther, List<Filter> filters,
+                                                                           GroupedBy groupedBy, final String key,
+                                                                           final Function<TermsAggregation.Entry, String> transform) {
+        CompletableFuture<List<TrafficSummary<String>>> summaryFutures;
         if (N > 0) {
-            final String query = searchQueryProvider.getTopNQuery(N, groupedBy, type.getKey(), filters);
+            final String query = searchQueryProvider.getTopNQuery(N, groupedBy, key, filters);
             summaryFutures = searchAsync(query, Filter.find(filters, TimeRangeFilter.class).orElse(null))
                     .thenApply(searchResult -> {
                         final MetricAggregation aggs = searchResult.getAggregations();
@@ -260,16 +290,16 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
                             return Collections.emptyList();
                         }
 
-                        List<TrafficSummary<T>> trafficSummaries = new ArrayList<>(N);
+                        List<TrafficSummary<String>> trafficSummaries = new ArrayList<>(N);
                         for (TermsAggregation.Entry bucket : byKeyAgg.getBuckets()) {
                             SumAggregation ingress = bucket.getSumAggregation("bytes_ingress");
                             SumAggregation egress = bucket.getSumAggregation("bytes_egress");
 
-                            trafficSummaries.add(TrafficSummary.<T>builder()
-                                    .withEntity(type.toEntity(bucket.getKeyAsString()))
-                                    .withBytesIn(ingress.getSum().longValue())
-                                    .withBytesOut(egress.getSum().longValue())
-                                    .build());
+                            trafficSummaries.add(TrafficSummary.<String>builder()
+                                                         .withEntity(transform.apply(bucket))
+                                                         .withBytesIn(ingress.getSum().longValue())
+                                                         .withBytesOut(egress.getSum().longValue())
+                                                         .build());
                         }
                         return trafficSummaries;
                     });
@@ -281,32 +311,32 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
             return summaryFutures;
         }
 
-        CompletableFuture<TrafficSummary<T>> totalTrafficFuture = getOtherTraffic(groupedBy.getParent(), type.getOtherEntity(), filters);
-        return summaryFutures.thenCombine(totalTrafficFuture, (topK,total) -> {
+        CompletableFuture<TrafficSummary<String>> totalTrafficFuture = getOtherTraffic(groupedBy.getParent(), OTHER_NAME, filters);
+        return summaryFutures.thenCombine(totalTrafficFuture, (topK, total) -> {
             BytesInOut totalBytes = total.getBytesInOut();
             BytesInOut bytesFromTopK = BytesInOut.sum(topK);
 
             // Determine the remainder of bytes not represented by the top K
             BytesInOut otherBytes = totalBytes.minus(bytesFromTopK);
 
-            List<TrafficSummary<T>> newTopK = new ArrayList<>(topK);
-            newTopK.add(TrafficSummary.<T>builder()
-                    .withEntity(type.getOtherEntity())
-                    .withBytesIn(otherBytes.getBytesIn())
-                    .withBytesOut(otherBytes.getBytesOut())
-                    .build());
+            List<TrafficSummary<String>> newTopK = new ArrayList<>(topK);
+            newTopK.add(TrafficSummary.<String>builder()
+                                .withEntity(OTHER_NAME)
+                                .withBytesIn(otherBytes.getBytesIn())
+                                .withBytesOut(otherBytes.getBytesOut())
+                                .build());
             return newTopK;
         });
     }
 
-    private <T> CompletableFuture<TrafficSummary<T>> getOtherTraffic(GroupedBy groupedBy, T entity, List<Filter> filters) {
+    private CompletableFuture<TrafficSummary<String>> getOtherTraffic(GroupedBy groupedBy, String entity, List<Filter> filters) {
         final String query = searchQueryProvider.getSumQuery(groupedBy, filters);
         return searchAsync(query, Filter.find(filters, TimeRangeFilter.class).orElse(null))
                 .thenApply(searchResult -> {
                     final MetricAggregation aggs = searchResult.getAggregations();
                     SumAggregation ingress = aggs.getSumAggregation("bytes_ingress");
                     SumAggregation egress = aggs.getSumAggregation("bytes_egress");
-                    return TrafficSummary.<T>builder()
+                    return TrafficSummary.<String>builder()
                             .withEntity(entity)
                             .withBytesIn(ingress != null ? ingress.getSum().longValue() : 0L)
                             .withBytesOut(egress != null ? egress.getSum().longValue() : 0L)
@@ -372,6 +402,62 @@ public class AggregatedFlowQueryService extends ElasticFlowQueryService {
     @Override
     public CompletableFuture<Table<Directional<Host>, Long, Double>> getHostSeries(Set<String> hosts, long step, boolean includeOther, List<Filter> filters) {
         throw new UnsupportedOperationException("Enumerating specific conversation series is not supported.");
+    }
+
+    private static String mapApplication(final TermsAggregation.Entry entry) {
+        final String key = entry.getKeyAsString();
+        if ("__unknown".equals(key)) {
+            return "Unknown";
+        }
+        return key;
+    }
+
+    public CompletableFuture<Conversation> resolveHostnameForConversation(final String convoKey, final List<Filter> filters) {
+        if (OTHER_NAME.equals(convoKey)) {
+            return CompletableFuture.completedFuture(Conversation.forOther().build());
+        }
+
+        final ConversationKey key = ConversationKeyUtils.fromJsonString(convoKey);
+
+        final CompletableFuture<Optional<String>> lowerHostname = this.resolveHostname(key.getLowerIp(), filters);
+        final CompletableFuture<Optional<String>> upperHostname = this.resolveHostname(key.getUpperIp(), filters);
+
+        return lowerHostname.thenCombine(upperHostname, (lower, upper) -> {
+            final Conversation.Builder result = Conversation.from(key);
+            lower.ifPresent(result::withLowerHostname);
+            upper.ifPresent(result::withUpperHostname);
+            return result.build();
+        });
+    }
+
+    public CompletableFuture<Host> resolveHostnameForHost(final String host, final List<Filter> filters) {
+        if (OTHER_NAME.equals(host)) {
+            return CompletableFuture.completedFuture(Host.forOther().build());
+        }
+
+        return this.resolveHostname(host, filters)
+            .thenApply(hostname -> {
+                final Host.Builder result = Host.from(host);
+                hostname.ifPresent(result::withHostname);
+                return result.build();
+            });
+    }
+
+    private CompletableFuture<Optional<String>> resolveHostname(final String ip, final List<Filter> filters) {
+        final TimeRangeFilter timeRangeFilter = Filter.find(filters, TimeRangeFilter.class).orElse(null);
+
+        final String hostnameQuery = searchQueryProvider.getHostname(ip, filters);
+        return searchAsync(hostnameQuery, timeRangeFilter)
+                .thenApply(res -> {
+                    final SearchResult.Hit<JsonObject, Void> hit = res.getFirstHit(JsonObject.class);
+                    if (hit != null) {
+                        if (Objects.equals(hit.source.getAsJsonPrimitive("host_address").getAsString(), ip)) {
+                            return Optional.ofNullable(hit.source.getAsJsonPrimitive("host_name")).map(JsonPrimitive::getAsString);
+                        }
+                    }
+
+                    return Optional.empty();
+                });
     }
 
 }
