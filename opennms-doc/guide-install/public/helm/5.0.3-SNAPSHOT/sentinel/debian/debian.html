@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Untitled :: Horizon</title>
+    <link rel="canonical" href="https://docs.opennms.com/helm/5.0.3-SNAPSHOT/sentinel/debian/debian.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.opennms.com">Horizon</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Videos</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.youtube.com/watch?v=GJzmkshdjiI&list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z" target="blank">OpenNMS 101 Training</a>
+            <a class="navbar-item" href="https://www.youtube.com/watch?v=aoiSjNvDC7E&list=PLsXgBGH3nG7h6zy2hENGRJbs0BYQaqBu4" target="blank">OpenNMS 102 Training</a>
+            <a class="navbar-item" href="https://www.youtube.com/opennms" target="blank">OpenNMS on YouTube</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Community Tools</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.opennms.com" target="blank">Project Website</a>
+            <a class="navbar-item" href="https://issues.opennms.org" target="blank">JIRA</a>
+            <a class="navbar-item" href="https://opennms.discourse.group" target="blank">Discourse</a>
+            <a class="navbar-item" href="https://chat.opennms.com" target="blank">Mattermost Chat</a>
+            <a class="navbar-item" href="https://toolbox.opennms.eu" target="blank">Toolbox</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">OpenNMS Group</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.opennms.com/training" target="blank">Training</a>
+            <a class="navbar-item" href="https://www.opennms.com/support" target="blank">Commercial Support</a>
+            <a class="navbar-item" href="https://www.opennms.com/sponsored-development" target="blank">Sponsored Development</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="https://github.com/opennms" target="blank">GitHub</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm" data-version="5.0.3-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../index.html">HELM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/introduction.html">About this Guide</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#about:compatability.adoc">Compatability</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Basic HELM Core Setup</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:setting-up-opennms.adoc">Setting up Basic HELM Core</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:rhel:installing-on-rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:debian:installing-on-debian.adoc">Installing on Debian/Ubuntu</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:docker:opennms-docker.adoc">Run with Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Installing and Configuring a Minion</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../monitor-location-minion/setting-up-minion.html">Installing and Configuring a Minion</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:rhel:installing-on-rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:debian:installing-on-debian.adoc">Installingn on Debian</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:docker:minion-docker.adoc">Run with Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Installing and Configuring Sentinel</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:setting-up-sentinel.adoc">Setting up Sentinel</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:rhel:rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:debian:debian.adoc">Installing on Debian</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#:expressions.adoc">Expressions</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">HELM</span>
+    <span class="version">5.0.3-SNAPSHOT</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">HELM</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">5.0.3-SNAPSHOT</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+</nav>
+  <div class="edit-this-page"><a href="file:///antora/modules/sentinel/pages/debian/debian.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<div class="sect2">
+<h3 id="_installing_on_debian"><a class="anchor" href="#_installing_on_debian"></a>Installing on Debian</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Setup <em>{opennms-product-name}</em> to allow <em>Sentinel</em> communication</p>
+</li>
+<li>
+<p>Installation of the <code>opennms-sentinel</code> meta package which handles all dependencies</p>
+</li>
+<li>
+<p>Starting <em>Sentinel</em> and access the <em>Karaf</em> console over <em>SSH</em></p>
+</li>
+<li>
+<p>Configure <em>Sentinel</em> to communicate with <em>{opennms-product-name}</em></p>
+</li>
+<li>
+<p>Verify the connectivity between <em>Sentinel</em> and <em>{opennms-product-name}</em></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>All commands on the command line interface need to be executed with <em>root</em> permissions.</p>
+</div>
+<div class="sect3">
+<h4 id="_step_1_setup_opennms_product_name_to_allow_sentinel_communication"><a class="anchor" href="#_step_1_setup_opennms_product_name_to_allow_sentinel_communication"></a>Step 1: Setup {opennms-product-name} to allow Sentinel communication</h4>
+<div class="paragraph">
+<p>This step is exactly the same as for <em>Minion</em>.
+Even the role name <code>ROLE_MINION</code> can be used, as there does not exist a dedicated role <code>ROLE_SENTINEL</code> yet.</p>
+</div>
+<div class="paragraph">
+<p>Therefore, please refer to section <a href="#gi-minion-rhel-setup-communication">Setup {opennms-product-name} to allow Minion communication</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Even if we have to configure the communication to the <em>{opennms-product-name}</em> exactly the same as for <em>Minion</em>
+        no ReST requests are made and may be removed at a later state.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_step_2_install_the_repository_and_sentinel_package"><a class="anchor" href="#_step_2_install_the_repository_and_sentinel_package"></a>Step 2: Install the repository and Sentinel package</h4>
+<div class="listingblock">
+<div class="title">Add apt repository in /etc/apt/sources.list.d/opennms.list and add GPG key</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">echo 'deb https://debian.opennms.org stable main \
+      deb-src https://debian.opennms.org branches/features-sentinel main' &gt; /etc/apt/sources.list.d/opennms.list
+wget -O - https://debian.opennms.org/OPENNMS-GPG-KEY | apt-key add -
+apt update</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Install the Sentinel package</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt -y install opennms-sentinel</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <em>Sentinel</em> packages setup the following directory structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">[root@localhost /usr/share/sentinel]# $ tree -L 1
+.
+|-- bin
+|-- COPYING
+|-- data
+|-- debian
+|-- deploy
+|-- etc
+|-- lib
+`-- system</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Additionally, symbolic links are set up pointing to <code>/etc/sentinel</code> and <code>/var/log/sentinel</code> to match Debian&#8217;s expected filesystem layout.</p>
+</div>
+<div class="paragraph">
+<p>The Minion&#8217;s startup configuration can be changed by editing the <code>/etc/default/sentinel</code> file.
+It allows to override the defaults used at startup including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Location of the JDK</p>
+</li>
+<li>
+<p>Memory usage</p>
+</li>
+<li>
+<p>User to run as</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_step_3_starting_the_sentinel_and_test_access_to_karaf_shell"><a class="anchor" href="#_step_3_starting_the_sentinel_and_test_access_to_karaf_shell"></a>Step 3: Starting the Sentinel and test access to Karaf Shell</h4>
+<div class="listingblock">
+<div class="title">Configure systemd to start <em>Sentinel</em> on system boot</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">systemctl enable sentinel</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Startup <em>Sentinel</em></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">systemctl start sentinel</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Test access to Karaf shell with user admin and password admin and exit with &lt;ctrl-d&gt;</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">ssh -p 8301 admin@localhost</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_step_4_configure_sentinel_to_communicate_with_opennms_product_name"><a class="anchor" href="#_step_4_configure_sentinel_to_communicate_with_opennms_product_name"></a>Step 4: Configure Sentinel to communicate with {opennms-product-name}</h4>
+<div class="listingblock">
+<div class="title">Login to the Karaf Shell on the system where your <em>Sentinel</em> is installed with SSH</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">ssh -p 8301 admin@localhost</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Configure the Sentinel&#8217;s location and endpoint URLs for communication with {opennms-product-name}</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>[root@localhost /root]# $ ssh -p 8201 admin@localhost
+...
+admin@sentinel()&gt; config:edit org.opennms.sentinel.controller
+admin@sentinel()&gt; config:property-set location Office-Pittsboro
+admin@sentinel()&gt; config:property-set http-url http://opennms-fqdn:8980/opennms
+admin@sentinel()&gt; config:property-set broker-url failover:tcp://opennms-fqdn:61616
+admin@sentinel()&gt; config:update</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Include the <code>failover:</code> portion of the broker URL to allow the <em>Sentinel</em> to re-establish connectivity on failure.
+        For a reference on the different URL formats, see <a href="http://activemq.apache.org/uri-protocols.html">ActiveMQ URI Protocols</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Even if the id, location and http-url must be set the same ways as for <em>Minion</em>, this may change in future
+        versions of <em>Sentinel</em>.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Configure the credentials to use when communicating with {opennms-product-name}</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>admin@sentinel()&gt; opennms:scv-set opennms.http minion minion
+admin@sentinel()&gt; opennms:scv-set opennms.broker minion minion</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Username and password is explicitly set to <code>minion</code> as it is assumed that they share the same credentials and roles.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Another way to configure credentials is to use the <code>scvcli</code> utility in your <em>Sentinel</em> <code>bin</code> directory.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example of configuring credentials with the command line utility <code>scvcli</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code>[root@localhost /root]# $ cd /opt/sentinel
+[root@localhost /usr/share/sentinel]# $ ./bin/scvcli set opennms.http minion minion
+[root@localhost /usr/share/sentinel]# $ ./bin/scvcli set opennms.broker minion minion</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Restart the Sentinel after updating the credentials</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>[root@localhost /root]# $ systemctl restart sentinel</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The credentials are configured separately since they are encrypted on disk.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_step_5_verifying_connectivity"><a class="anchor" href="#_step_5_verifying_connectivity"></a>Step 5: Verifying Connectivity</h4>
+<div class="listingblock">
+<div class="title">Connect to Karaf Shell of the Sentinel</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>ssh -p 8301 admin@localhost</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Verify connectivity with the <em>{opennms-product-name}</em></div>
+<div class="content">
+<pre class="highlightjs highlight"><code>admin@sentinel()&gt; feature:install sentinel-core
+admin@sentinel&gt; opennms:health-check
+Verifying the health of the container
+
+Verifying installed bundles      [ Success  ]
+Connecting to OpenNMS ReST API   [ Success  ]
+
+=&gt; Everything is awesome
+admin@sentinel()&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>opennms:health-check</code> command is a newer and more flexibel version of the original <code>minion:ping</code> command.
+        Therefore on <em>Sentinel</em> there is no equivalent such as <code>sentinel:ping</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: {
+      Macros: {
+      RR: "{\\mathbb R}",
+      NN: "{\\mathbb N}",
+      Nso: "{N_{\\mathrm{so}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      calTh: "{\\mathcal{T}_h}",
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      poly: ["{\\mathbb{#1}}",1],
+      nf: "{n_f}",
+      normal: "{\\mathbf{n}}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      geo: "{\\mathrm{geo}}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      opdim: "{\\operatorname{dim}}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      set: ["{\\left\\{#1\\right\\}}",1],
+      diam: "{\\operatorname{diam}}",
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      Next: "{\\mathrm{n}}",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      tr: "{\\operatorname{tr}}",
+      Id: "{\\mathcal{I}}",
+      disp: ["{\\mathbf{#1}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      domain: "{\\Omega}",
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      ds: "",
+      bold: ["{\\bf #1}",1]
+  },
+  extensions: ["mhchem.js"] }
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+  </body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Untitled :: Horizon</title>
+    <link rel="canonical" href="https://docs.opennms.com/helm/5.0.3-SNAPSHOT/minion/introduction.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.opennms.com">Horizon</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Videos</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.youtube.com/watch?v=GJzmkshdjiI&list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z" target="blank">OpenNMS 101 Training</a>
+            <a class="navbar-item" href="https://www.youtube.com/watch?v=aoiSjNvDC7E&list=PLsXgBGH3nG7h6zy2hENGRJbs0BYQaqBu4" target="blank">OpenNMS 102 Training</a>
+            <a class="navbar-item" href="https://www.youtube.com/opennms" target="blank">OpenNMS on YouTube</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Community Tools</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.opennms.com" target="blank">Project Website</a>
+            <a class="navbar-item" href="https://issues.opennms.org" target="blank">JIRA</a>
+            <a class="navbar-item" href="https://opennms.discourse.group" target="blank">Discourse</a>
+            <a class="navbar-item" href="https://chat.opennms.com" target="blank">Mattermost Chat</a>
+            <a class="navbar-item" href="https://toolbox.opennms.eu" target="blank">Toolbox</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">OpenNMS Group</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.opennms.com/training" target="blank">Training</a>
+            <a class="navbar-item" href="https://www.opennms.com/support" target="blank">Commercial Support</a>
+            <a class="navbar-item" href="https://www.opennms.com/sponsored-development" target="blank">Sponsored Development</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="https://github.com/opennms" target="blank">GitHub</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm" data-version="5.0.3-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">HELM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about/introduction.html">About this Guide</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#about:compatability.adoc">Compatability</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Basic HELM Core Setup</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:setting-up-opennms.adoc">Setting up Basic HELM Core</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:rhel:installing-on-rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:debian:installing-on-debian.adoc">Installing on Debian/Ubuntu</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:docker:opennms-docker.adoc">Run with Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Installing and Configuring a Minion</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../monitor-location-minion/setting-up-minion.html">Installing and Configuring a Minion</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:rhel:installing-on-rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:debian:installing-on-debian.adoc">Installingn on Debian</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:docker:minion-docker.adoc">Run with Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Installing and Configuring Sentinel</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:setting-up-sentinel.adoc">Setting up Sentinel</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:rhel:rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:debian:debian.adoc">Installing on Debian</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#:expressions.adoc">Expressions</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">HELM</span>
+    <span class="version">5.0.3-SNAPSHOT</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">HELM</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">5.0.3-SNAPSHOT</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+</nav>
+  <div class="edit-this-page"><a href="file:///antora/modules/minion/pages/introduction.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<div class="sect1">
+<h2 id="gi-minion"><a class="anchor" href="#gi-minion"></a>Installing Minion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Minion</em> gives the ability to monitor devices and applications which are in isolated networks and hard to reach from a central <em>{opennms-product-name}</em> instance.
+Maintaining a large set of <em>Firewall</em> rules to allow a variety of management protocols is sometimes tedious and hard to set up.
+Communicating with managed devices over unreliable networks and the use of <em>UDP</em> based management protocols can also be difficult to maintain.
+Deploying a <em>Minion</em> can be used to address these issues.</p>
+</div>
+<div class="paragraph">
+<p>A <em>Minion</em> can be used when a central <em>{opennms-product-name}</em> can&#8217;t reach all devices and <em>Management Agents</em> for monitoring.
+Furthermore it simplifies the network communication by using <em>TCP</em>-based <em>ActiveMQ</em> and <em>ReST</em> communication.</p>
+</div>
+<div class="paragraph">
+<p>The network area where access to managed network devices and applications is allowed can be modeled in a <em>Location</em>.
+Monitored <em>Nodes</em> and <em>IP Services</em> are associated to <em>Locations</em> and are defined during <em>Provisioning</em>.
+Each <em>Minion</em> is configured with a <em>Location</em> and all <em>Nodes</em> and <em>IP Services</em> in the same <em>Location</em> are monitored through this <em>Minion</em>.</p>
+</div>
+<div id="gi-install-minion-location" class="imageblock">
+<div class="content">
+<img src="_images/minion/01_minion-location.png" alt="01 minion location">
+</div>
+<div class="title">Figure 1. <em>Nodes</em> with <em>Minions</em> in <em>Locations</em></div>
+</div>
+<div class="paragraph">
+<p>The figure <a href="#gi-install-minion-location"><em>Nodes</em> with <em>Minions</em> in <em>Locations</em></a> illustrates a <em>Minion</em> deployment in isolated branch offices.</p>
+</div>
+<div class="paragraph">
+<p>Every <em>Node</em> created in <em>{opennms-product-name}</em> is by default created in the <em>Location</em> named <em>Default</em>.
+All <em>Nodes</em> and <em>Services</em> in the <em>Default Location</em> are handled by the central <em>{opennms-product-name}</em> instance itself.
+For each branch office in an isolated network, a <em>Location</em> is defined.
+The <em>Minion</em> has a configuration property for the <em>Location</em> and will register itself to the {opennms-product-name} instance on startup.</p>
+</div>
+<div class="paragraph">
+<p>The <em>Provisioning System</em> allows to associate <em>Nodes</em> to a <em>Location</em>.
+<em>{opennms-product-name}</em> will delegate monitoring requests for <em>Nodes</em> in the specified <em>Locations</em> to the registered <em>Minions</em> and uses them as a proxy.</p>
+</div>
+<div class="paragraph">
+<p>Figure <a href="#gi-install-minion-communication">Minion communication</a> gives a more detailed overview about the communication between an <em>{opennms-product-name}</em> instance and a <em>Minion</em>.</p>
+</div>
+<div id="gi-install-minion-scenario" class="imageblock">
+<div class="content">
+<img src="_images/minion/02_minion-communication.png" alt="02 minion communication">
+</div>
+<div class="title">Figure 2. Minion communication</div>
+</div>
+<div class="paragraph">
+<p>The <em>Minion</em> needs a configuration which requires at minimum the following information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An unique identifier (<code>id</code>) for this specific <em>Minion</em></p>
+</li>
+<li>
+<p>Monitoring <em>Location</em> name (<code>location</code>) this <em>Minion</em> is responsible</p>
+</li>
+<li>
+<p>The communication endpoints (<code>broker-url</code> and <code>http-url</code>) for the central <em>{opennms-product-name}</em> instance</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The configuration resides in a property file in <code>${MINION_HOME}/etc/org.opennms.minion.controller.cfg</code>.
+When the minimal configuration is set up the <em>Minion</em> can be started and initially connects to the central <em>{opennms-product-name}</em> instance and identifies itself with his unique <em>ID</em>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The unique <em>ID</em> is generated when the packages get installed <code>/usr/bin/uuidgen -t</code> and is used if no <em>ID</em> is set manually.
+On upgrade the <em>ID</em> is not updated.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>By default the <em>Minion</em> will be automatically provisioned as a <em>Node</em> in the <em>{opennms-product-name}</em> instance and get automatically monitored with the <em>Minion-Heartbeat</em> service.
+The <em>Minion</em> sends heart beat messages to ensure it is running and functioning properly in this network area.</p>
+</div>
+<div class="paragraph">
+<p>The specific management protocol messages, e.g. <em>SNMP</em>, <em>ICMP</em>, are piped through an <em>ActiveMQ</em> messaging communication channel and are executed by a <em>Minion</em>.
+Responses are forwarded to the central <em>{opennms-product-name}</em> instance and are processed accordingly.</p>
+</div>
+<div class="paragraph">
+<p><em>Minions</em> can be installed on every system that is able to communicate with these two endpoints:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <em>OpenNMS ReST Interface</em>, by default <em>TCP</em> port 8980</p>
+</li>
+<li>
+<p>The <em>ActiveMQ</em> broker used by <em>{opennms-product-name}</em>, by default <em>TCP</em> port 61616</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following management protocols are currently supported in a <em>Minion</em> proxy scenario:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Receive <em>Syslog</em> messages and forward them through <em>ActiveMQ</em> to a central <em>{opennms-product-name}</em> instance</p>
+</li>
+<li>
+<p>Receive <em>SNMP Traps</em> and forward them through <em>ActiveMQ</em> to a central <em>{opennms-product-name}</em> instance</p>
+</li>
+<li>
+<p>Act as a proxy for <em>SNMP</em> performance data collections</p>
+</li>
+<li>
+<p>Act as a proxy for <em>Service Monitors</em> to test availability and measure response times from applications</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Packages are only available for <em>RHEL</em>-based systems (<em>RPMS</em>).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+To avoid issues, make sure the <em>Minion</em> and the instance of <em>{opennms-product-name}</em> have the same version.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: {
+      Macros: {
+      RR: "{\\mathbb R}",
+      NN: "{\\mathbb N}",
+      Nso: "{N_{\\mathrm{so}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      calTh: "{\\mathcal{T}_h}",
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      poly: ["{\\mathbb{#1}}",1],
+      nf: "{n_f}",
+      normal: "{\\mathbf{n}}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      geo: "{\\mathrm{geo}}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      opdim: "{\\operatorname{dim}}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      set: ["{\\left\\{#1\\right\\}}",1],
+      diam: "{\\operatorname{diam}}",
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      Next: "{\\mathrm{n}}",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      tr: "{\\operatorname{tr}}",
+      Id: "{\\mathcal{I}}",
+      disp: ["{\\mathbf{#1}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      domain: "{\\Omega}",
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      ds: "",
+      bold: ["{\\bf #1}",1]
+  },
+  extensions: ["mhchem.js"] }
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+  </body>
+</html>

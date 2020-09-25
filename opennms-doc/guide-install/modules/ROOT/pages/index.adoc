@@ -1,0 +1,16 @@
+:imagesdir: ../assets/images
+
+[[welcome-index]]
+= {page-component-title} {page-version} Documentation
+
+:data-uri:
+:icons:
+
+[.lead]
+Welcome to the {page-component-title} {page-version} installation guide: i
+
+[big]*Need help?*
+
+* talk to us in https://chat.opennms.com/opennms[chat]
+* join our community on https://opennms.discourse.group/latest[Discourse]
+

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Untitled :: Horizon</title>
+    <link rel="canonical" href="https://docs.opennms.com/helm/5.0.3-SNAPSHOT/basic-setup-opennms/docker/opennms-docker.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.opennms.com">Horizon</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Videos</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.youtube.com/watch?v=GJzmkshdjiI&list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z" target="blank">OpenNMS 101 Training</a>
+            <a class="navbar-item" href="https://www.youtube.com/watch?v=aoiSjNvDC7E&list=PLsXgBGH3nG7h6zy2hENGRJbs0BYQaqBu4" target="blank">OpenNMS 102 Training</a>
+            <a class="navbar-item" href="https://www.youtube.com/opennms" target="blank">OpenNMS on YouTube</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Community Tools</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.opennms.com" target="blank">Project Website</a>
+            <a class="navbar-item" href="https://issues.opennms.org" target="blank">JIRA</a>
+            <a class="navbar-item" href="https://opennms.discourse.group" target="blank">Discourse</a>
+            <a class="navbar-item" href="https://chat.opennms.com" target="blank">Mattermost Chat</a>
+            <a class="navbar-item" href="https://toolbox.opennms.eu" target="blank">Toolbox</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">OpenNMS Group</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://www.opennms.com/training" target="blank">Training</a>
+            <a class="navbar-item" href="https://www.opennms.com/support" target="blank">Commercial Support</a>
+            <a class="navbar-item" href="https://www.opennms.com/sponsored-development" target="blank">Sponsored Development</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="https://github.com/opennms" target="blank">GitHub</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm" data-version="5.0.3-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../index.html">HELM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/introduction.html">About this Guide</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#about:compatability.adoc">Compatability</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Basic HELM Core Setup</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:setting-up-opennms.adoc">Setting up Basic HELM Core</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:rhel:installing-on-rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:debian:installing-on-debian.adoc">Installing on Debian/Ubuntu</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#basic-setup-opennms:docker:opennms-docker.adoc">Run with Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Installing and Configuring a Minion</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../monitor-location-minion/setting-up-minion.html">Installing and Configuring a Minion</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:rhel:installing-on-rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:debian:installing-on-debian.adoc">Installingn on Debian</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#monitor-location-minion:docker:minion-docker.adoc">Run with Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Installing and Configuring Sentinel</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:setting-up-sentinel.adoc">Setting up Sentinel</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:rhel:rhel.adoc">Installing on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#sentinel:debian:debian.adoc">Installing on Debian</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#:expressions.adoc">Expressions</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">HELM</span>
+    <span class="version">5.0.3-SNAPSHOT</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">HELM</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">5.0.3-SNAPSHOT</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+</nav>
+  <div class="edit-this-page"><a href="file:///antora/modules/basic-setup-opennms/pages/docker/opennms-docker.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<div class="sect2">
+<h3 id="_run_with_docker"><a class="anchor" href="#_run_with_docker"></a>Run with Docker</h3>
+<div class="paragraph">
+<p>Modern infrastructure allows you to deploy and run workloads in containers.
+<em>{opennms-product-name}</em> provides and publishes container images on <a href="https://hub.docker.com/u/opennms">DockerHub</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We don&#8217;t install all available plugins in our published Docker image.
+      If you want to customize and maintain your own image, you can find the <em>Dockerfiles</em> in our <a href="https://github.com/OpenNMS/opennms/tree/develop/opennms-container">source repository</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_objectives"><a class="anchor" href="#_objectives"></a>Objectives</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Run <em>{opennms-product-name}</em> using <em>Docker Compose</em> with a basic setup and <em>PostgreSQL</em> on your local system as a quickstart</p>
+</li>
+<li>
+<p>Persist RRD files from <em>{opennms-product-name}</em> and <em>PostgreSQL</em> in a volume</p>
+</li>
+<li>
+<p>Introduce a reference with all available configuration and mount conventions for more advanced setups</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h4>
+<div class="paragraph">
+<p>You must have at least the following components installed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Current stable <em>Docker</em> release installed, e.g., installed from <a href="https://docs.docker.com/">Docker Documentation</a></p>
+</li>
+<li>
+<p>Current stable <em>Docker Compose</em> installed, e.g., installed from <a href="https://docs.docker.com/compose/install/">Docker Compose instructions</a>
+You should have a basic knowledge of <em>Docker</em>, <em>Docker Compose</em> with networking, persisting files and mounting directories</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_quickstart_service_stack"><a class="anchor" href="#_quickstart_service_stack"></a>Quickstart service stack</h4>
+<div class="sect4">
+<h5 id="_step_1_create_service_stack_for_postgresql_and_opennms_product_name"><a class="anchor" href="#_step_1_create_service_stack_for_postgresql_and_opennms_product_name"></a>Step 1: Create service stack for PostgreSQL and <em>{opennms-product-name}</em></h5>
+<div class="paragraph">
+<p>The first section describes how to set up <em>{opennms-product-name}</em> service stack in a <code>docker-compose.yml</code> file.
+Create a project directory with <code>mkdir opennms-horizon</code> and create a <code>docker-compose.yml</code> file in that directory with the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>---
+version: '3'
+
+volumes:
+  data-postgres: {}<i class="conum" data-value="1"></i><b>(1)</b>
+  data-opennms: {}<i class="conum" data-value="2"></i><b>(2)</b>
+
+services:
+  database:<i class="conum" data-value="3"></i><b>(3)</b>
+    image: postgres:12<i class="conum" data-value="4"></i><b>(4)</b>
+    container_name: database<i class="conum" data-value="5"></i><b>(5)</b>
+    environment:<i class="conum" data-value="6"></i><b>(6)</b>
+      - TZ=Europe/Berlin
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:<i class="conum" data-value="7"></i><b>(7)</b>
+      - data-postgres:/var/lib/postgresql/data
+    healthcheck:<i class="conum" data-value="8"></i><b>(8)</b>
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 30s
+      retries: 3
+
+  horizon:
+    image: opennms/horizon:{opennms-version}<i class="conum" data-value="9"></i><b>(9)</b>
+    container_name: horizon
+    environment:<i class="conum" data-value="10"></i><b>(10)</b>
+      - TZ=Europe/Berlin
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - OPENNMS_DBNAME=opennms
+      - OPENNMS_DBUSER=opennms
+      - OPENNMS_DBPASS=opennms
+    volumes:
+      - data-opennms:/opt/opennms/share/rrd<i class="conum" data-value="11"></i><b>(11)</b>
+      - ./overlay:/opt/opennms-overlay<i class="conum" data-value="12"></i><b>(12)</b>
+    command: ["-s"]
+    ports:<i class="conum" data-value="13"></i><b>(13)</b>
+      - "8980:8980/tcp"
+      - "8101:8101/tcp"
+      - "61616:61616/tcp"
+    healthcheck:<i class="conum" data-value="14"></i><b>(14)</b>
+      test: [ "CMD", "curl", "-f", "-I", "http://localhost:8980/opennms/login.jsp" ]
+      interval: 1m
+      timeout: 5s
+      retries: 3</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Volume definition to persist  the <em>PostgreSQL</em> database permanently</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Volume definition to persist the <em>RRD</em> files from <em>{opennms-product-name}</em> permanently</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Service name <code>database</code> for the <em>PostgreSQL</em> instance</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Image reference for the vanilla <em>PostgreSQL</em> Docker image with a fixed version</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Friendly container name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Environment variables to initialize a postgres user with a password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Assign volume to persist the <em>PostgreSQL</em> database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Create a health check for the <em>PostgreSQL</em> database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Image reference for the <em>{opennms-product-name}</em> container image using the latest stable version</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Set up a database connection using the <code>postgres</code> root user and initialize an <code>opennms</code> database with user and credentials</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Assign the volume to persist the <em>RRD</em> files permanently</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Mount the configuration files to make them accessible in a local directory</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>Publish ports for the web user interface, <em>Karaf Shell</em> and <em>ActiveMQ</em></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td>Create a health check against the login page from <em>{opennms-product-name}</em></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_step_2_start_the_service_stack"><a class="anchor" href="#_step_2_start_the_service_stack"></a>Step 2: Start the service stack</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd opennms-horizon
+docker-compose up -d</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The startup and download can take a while; you can use the <code>docker-compose ps</code> command and wait until the health check for the <code>horizon</code> service is <code>up (healthy)</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_step_3_log_in_to_the_web_ui"><a class="anchor" href="#_step_3_log_in_to_the_web_ui"></a>Step 3: Log in to the Web UI</h5>
+<div class="paragraph">
+<p>After download and startup, verify that you can access the web user interface by going to <a href="http://localhost:8980" class="bare">http://localhost:8980</a>.
+The default login is <code>admin</code> with password <code>admin</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Please immediately change your admin account and set a strong password.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: {
+      Macros: {
+      RR: "{\\mathbb R}",
+      NN: "{\\mathbb N}",
+      Nso: "{N_{\\mathrm{so}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      calTh: "{\\mathcal{T}_h}",
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      poly: ["{\\mathbb{#1}}",1],
+      nf: "{n_f}",
+      normal: "{\\mathbf{n}}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      geo: "{\\mathrm{geo}}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      opdim: "{\\operatorname{dim}}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      set: ["{\\left\\{#1\\right\\}}",1],
+      diam: "{\\operatorname{diam}}",
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      Next: "{\\mathrm{n}}",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      tr: "{\\operatorname{tr}}",
+      Id: "{\\mathcal{I}}",
+      disp: ["{\\mathbf{#1}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      domain: "{\\Omega}",
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      ds: "",
+      bold: ["{\\bf #1}",1]
+  },
+  extensions: ["mhchem.js"] }
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+  </body>
+</html>
